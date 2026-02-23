@@ -1,0 +1,1 @@
+This Angular project follows a feature-based scalable architecture. The core folder contains singleton services and global logic, features are organized by business domain for modular growth, and shared contains reusable UI components. This separation improves maintainability, supports lazy loading, and allows independent feature scaling.
