@@ -1,0 +1,106 @@
+<div class="upload-wrapper">
+
+  <!-- Drop Zone -->
+  <div class="drop-zone"
+       [class.drag-active]="dragActive"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       (drop)="onDrop($event)">
+
+    <div class="drop-content">
+      <div class="upload-icon">📁</div>
+      <h2>Drag & Drop Files</h2>
+      <p>or select from your device</p>
+
+      <input type="file"
+             #fileInput
+             multiple
+             (change)="onFileSelected($event)"
+             hidden>
+
+      <button class="primary-btn" (click)="fileInput.click()">
+        Select Files
+      </button>
+    </div>
+  </div>
+
+  <!-- File Preview Section -->
+  <div class="file-container" *ngIf="files.length">
+
+    <div class="file-card" *ngFor="let file of files; let i = index">
+
+      <!-- File Info -->
+      <div class="file-info">
+        <img *ngIf="file.preview" [src]="file.preview" />
+        <div>
+          <p class="file-name">{{ file.name }}</p>
+          <p class="file-size">
+            {{ file.size / 1024 | number:'1.0-2' }} KB
+          </p>
+        </div>
+      </div>
+
+      <button class="remove-btn" (click)="removeFile(i)">✕</button>
+
+      <!-- Progress Bar -->
+      <div class="progress-bar" *ngIf="file.progress >= 0 && file.progress < 100">
+        <div class="progress" [style.width.%]="file.progress"></div>
+      </div>
+
+      <!-- Upload Completed -->
+      <div *ngIf="file.progress === 100" class="success-msg">
+        ✅ Upload Completed
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="file.error" class="error-msg">
+        ❌ {{ file.error }}
+      </div>
+
+      <!-- ============================= -->
+      <!-- API RESPONSE DISPLAY SECTION -->
+      <!-- ============================= -->
+
+      <div class="result-section" *ngIf="file.apiResponse">
+
+        <h3>📄 Uploaded File:</h3>
+        <p>{{ file.apiResponse.uploaded_file }}</p>
+
+        <h3>🔎 Similar Patents:</h3>
+
+        <div *ngIf="file.apiResponse.results?.length > 0; else noResults">
+
+          <div class="result-card"
+               *ngFor="let result of file.apiResponse.results; let r = index">
+
+            <h4>Result {{ r + 1 }}</h4>
+
+            <p><strong>Title:</strong> {{ result.title }}</p>
+
+            <p>
+              <strong>Similarity:</strong>
+              {{ result.score * 100 | number:'1.0-2' }}%
+            </p>
+
+            <p><strong>Description:</strong></p>
+            <p class="description">{{ result.description }}</p>
+
+          </div>
+
+        </div>
+
+        <ng-template #noResults>
+          <p>No similar patents found.</p>
+        </ng-template>
+
+      </div>
+
+    </div>
+
+    <button class="upload-btn" (click)="uploadFiles()">
+      🚀 Upload All
+    </button>
+
+  </div>
+
+</div>
